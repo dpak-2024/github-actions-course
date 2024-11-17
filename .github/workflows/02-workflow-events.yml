@@ -1,7 +1,10 @@
 name: event-workflows
 
-on: push
-
+on:
+  push:
+  pull_request:
+    types: [opened,reopened]
+  workflow_dispatch:
 jobs:
     echo:
       runs-on: ubuntu-latest
