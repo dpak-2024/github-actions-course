@@ -1,8 +1,21 @@
 name: "First block"
-on: push
+on:
+    push:
+    workflow_dispatch:
 
 jobs:
-    my-first-job:
+    echo-hello:
+        runs-on: ubuntu-latest
+        steps: 
+            - name: echo hello
+              run: echo "hello world"
+    echo-goodbye:
         runs-on: ubuntu-latest
         steps:
-            - run: echo "hello world"
+           - name: goobye
+             run: |
+                echo I will fail
+                exit 1
+                echo Goodbye
+
+        
