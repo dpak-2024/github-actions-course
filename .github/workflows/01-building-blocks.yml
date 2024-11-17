@@ -15,7 +15,6 @@ jobs:
            - name: goobye
              run: |
                 echo I will fail
-                exit 1
                 echo Goodbye
 
         
