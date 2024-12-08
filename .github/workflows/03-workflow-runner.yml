@@ -1,5 +1,5 @@
 name: "03-workflow-runner"
-on: push
+on: workflow_dispatch
 
 jobs:
   ubuntu-echo:
@@ -8,4 +8,12 @@ jobs:
       - name: Multi line bash
         run: |
           echo "This job is running on an Ubuntu runner."
+          echo "default runner os is ${RUNNER_OS}"
+  window-echo:
+    runs-on: windows-latest
+    steps:
+      - name: show os
+        shell: bash 
+        run: |
+          echo "This job is running on an windows runner."
           echo "default runner os is ${RUNNER_OS}"
