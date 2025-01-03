@@ -1,14 +1,25 @@
 name: 06-contexts
-
+run-name: "Debug: ${{ inputs.debug }}"
 on:
   push:
   workflow_dispatch:
+    inputs:
+        debug:
+          type: boolean
+          default: false
+
+env:
+    workflow-var: "env outside"
+    overwritten-var: "value outside"
 
 jobs: 
   echo-data:
     runs-on: ubuntu-latest
     steps:
       - name: Display information
+        env:
+            workflow-step: "display step"
+            overwritten-var: "step inside"
         run: |
           echo "Event name: ${{ github.event_name }}"
           echo "Commit sha: ${{ github.sha }}"
@@ -17,6 +28,9 @@ jobs:
           echo "Workflow: ${{ github.workflow }}"
           echo "Runid : ${{ github.run_id }}"
           echo "Run number: ${{ github.run_number }}"
+          echo "env value for var: ${{ env.workflow-var }}"
+          echo "env value for step: ${{ env.workflow-step }}"
+          echo "env value for overwritten: ${{ env.overwritten-var }}"
       - name: variables definition
         run: |
           echo "My var is: ${{ vars.MY_VAR }}"
