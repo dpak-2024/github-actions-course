@@ -1,12 +1,12 @@
 name: 08 - using variables
 
 on:
-  push:
   workflow_dispatch:
 
 env:
     WORKFLOW_VAR: 'I am a workflow env var'
     OVERWRITTEN: 'I will be overwritten'
+    UNDEFINED_VAR_WITH_DEFAULT: ${{ vars.UNDEFINED_VAR || 'default_value' }}
 jobs:
   echo:
     runs-on: ubuntu-latest
@@ -23,8 +23,24 @@ jobs:
           echo "Step env var 2: ${{ env.step_var2  }}"
           echo "Workflow env var: ${{ env.WORKFLOW_VAR }}"
           echo "Job env var: ${{ env.JOB_VAR }}"
+          echo "respository var: ${{ vars.REPOSITORY_VAR }}"
       - name: Overwrite JOB variables
         env:
             OVERWRITTEN: 'I have been overwritten by the step env var'
         run: |
           echo "Step env var: ${{ env.OVERWRITTEN  }}"
+  echo-prod:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Print Prod Variables
+        run: |
+          echo "Environment var: ${{ vars.TARGET_VAR  }}"
+          echo "respository var: ${{ vars.REPOSITORY_VAR }}"
+  echo-undefined:
+    runs-on: ubuntu-latest
+    environment: prod
+    steps:
+      - name: Print undefined Variables
+        run: |
+          echo "undefined var: ${{ env.UNDEFINED_VAR_WITH_DEFAULT }}"
