@@ -65,6 +65,7 @@ jobs:
           name: app
           path: build
       - name: showcase folder
-        run: ls -R
+        run: |
+         ls -R
       - name: deploying
         run: echo "deploying"
