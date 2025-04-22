@@ -16,11 +16,39 @@ on:
         default: 20.x
 
 jobs:
-  build:
+  install-deps:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: 13-caching/react-app
+       working-directory: 13-caching/react-app
+    outputs:
+      deps-cache-key: ${{ steps.cache-key.outputs.CACHE_KEY }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+      - name: Calculate cache key
+        run: |
+          echo "CACHE_KEY=deps-node-modules-${{ hashFiles('13-caching/react-app/package.lock.json') }}" >> $GITHUB_OUTPUT
+        id: cache-key
+      - name: Download cached dependencies
+        if: ${{ inputs.use-cache }}
+        uses: actions/cache@v3
+        with:
+            path: 13-caching/react-app/node_modules
+            key: ${{ steps.cache-key.outputs.CACHE_KEY }}
+      - name: Install dependencies
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: npm ci
+  build:
+    runs-on: ubuntu-latest
+    needs: install-deps
+    defaults:
+        run:
+          working-directory: 13-caching/react-app
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -34,7 +62,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: 13-caching/react-app/node_modules
-          key: deps-node-modules-${{ hashFiles('13-caching/react-app/package.lock.json') }}
+          key: ${{ needs.install-deps.outputs.deps-cache-key }}
       - name: Install dependencies
         if: steps.cache.outputs.cache-hit != 'true'
         run: npm ci
@@ -44,4 +72,3 @@ jobs:
         run: npm run build
       - name: deploying
         run: echo "deploying"
-
